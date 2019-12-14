@@ -21,6 +21,7 @@ html {
   justify-content: center;
   text-align: center;
 }
+
 *,
 *:before,
 *:after {
@@ -28,6 +29,9 @@ html {
   margin: 0;
 }
 
+.color_maincolor {
+  color: #0F4C81;
+}
 
 .color_white {
   color: #FFFAFF;
@@ -47,6 +51,10 @@ html {
 
 .color_skyblue {
   color: #3E92CC;
+}
+
+.background_maincolor {
+  background-color: #0F4C81;
 }
 
 .background_white {

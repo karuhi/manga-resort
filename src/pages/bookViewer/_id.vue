@@ -16,7 +16,9 @@
       </slide>
       <template v-for="(element, index) in booksData.imageData">
         <slide :key="index" class="slide_page">
-          <img :src="`${element.imageUrl}`" />
+          <template>
+            <v-lazy-image :src="`${element.imageUrl}`"/>
+          </template>
         </slide>
       </template>
       <slide>
@@ -34,7 +36,7 @@
       </slide>
     </carousel>
     <div class="nowPageBanner">
-       {{ -preIndex + 6 }} / {{ booksData.pageNum + 2}}
+      {{ -preIndex + (booksData.pageNum + 2) }} / {{ booksData.pageNum + 2}}
     </div>
   </div>
 </template>
@@ -45,7 +47,7 @@ export default {
   data() {
     return {
       showNavigation: true,
-      preIndex: 5
+      preIndex: 0
     }
   },
   async asyncData({ params }) {
@@ -55,16 +57,14 @@ export default {
     var data = await Promise.all([
       myHttpClient.get('books/' + params.id)
     ])
-
-    console.log(data);
-    return { booksData: data[0]['data'] };
+    return { booksData: data[0].data,preIndex: (data[0].data.pageNum + 1)};
   },
   mounted() {
     this.reverseData()
     setTimeout(this.deleteNav, 3000);
   },
   methods: {
-    deleteNav () {
+    deleteNav() {
       this.showNavigation = false;
     },
     reverseData() {
@@ -84,6 +84,13 @@ export default {
 
 </script>
 <style scoped>
+.v-lazy-image {
+  opacity: 0;
+  transition: opacity .4s;
+}
+.v-lazy-image-loaded {
+  opacity: 1;
+}
 .page_navigation {
   position: absolute;
   top: 0;
@@ -98,6 +105,7 @@ export default {
   text-align: center;
   line-height: 58px;
 }
+
 .page_navigation-close {
   padding: 16px;
 }
@@ -129,6 +137,7 @@ export default {
   animation-timing-function: ease;
   animation-iteration-count: infinite;
 }
+
 .slide_btn {
   background-color: #0F4C81;
   color: white;
@@ -145,12 +154,13 @@ export default {
   bottom: 16px;
   left: 0;
   right: 0;
-  margin:auto auto;
-  background-color: rgba(0,0,0,0.4);
+  margin: auto auto;
+  background-color: rgba(0, 0, 0, 0.4);
   padding: 5px;
   width: 50px;
   border-radius: 5px;
 }
+
 @keyframes fade {
   0% {
     color: rgba(0, 0, 0, 0.1);

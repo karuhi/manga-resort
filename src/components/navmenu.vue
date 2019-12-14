@@ -1,40 +1,10 @@
 <template>
-  <header class="color_white background_black">
+  <header class="color_white background_maincolor">
     <div class="global">
       <div class="search">&nbsp&nbsp&nbsp&nbsp</div>
       <div class="title">MANGA RESORT</div>
       <div class="menu" @click="toggleMenu=!toggleMenu">
         <div class="background_white" v-for="n in 3"></div>
-      </div>
-    </div>
-    <div class="category_list">
-      <div class="category_m background_skyblue" v-for="(element, index) in tags">
-        {{element}}
-      </div>
-    </div>
-    <div class="toggleMenu background_black" v-show="toggleMenu">
-      <div class="Search">
-        <input type="text" name="SearchBar" class="SearchBar" placeholder="記事を検索...">
-        <button class="SearchButton background_skyblue color_white">検索</button>
-      </div>
-      <div class="text_left">タグ</div>
-      <div class="category_list">
-        <div class="category_l background_skyblue" v-for="(element, index) in tags">
-          {{element}}
-        </div>
-      </div>
-      <div class="text_left">日付</div>
-      <div class="category_list">
-        <div class="category_l background_skyblue" v-for="(element, index) in date">
-          {{element}}
-        </div>
-      </div>
-      <div class="text_left">おすすめの投稿</div>
-      <div class="featured_list">
-        <div v-for="(element, index) in json" v-if="element.featured" class="list">
-          <img :src="element.image">
-          <div class="title">{{element.title}}</div>
-        </div>
       </div>
     </div>
   </header>
@@ -44,7 +14,7 @@ export default {
   props: ['json'],
   data() {
     return {
-      tags: ['講談社', '新潟書店', '京田辺書店', 'Patreon'],
+      tags: ['出版社で選ぶ', '新潟書店', '京田辺書店', 'Patreon'],
       date: ['2019.5', '2019.4', '2019.3', '2019.2', '2019.1', '2018.12', '2018.11', '2018.10', '2018.9', ],
       toggleMenu: false
     }
@@ -56,7 +26,7 @@ export default {
 header {
   z-index: 99998;
   min-width: 100%;
-  height: 108px;
+  height: 58px;
   position: sticky;
   top: 0;
 }
@@ -65,7 +35,7 @@ header>.global {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 68px;
+  height: 58px;
 }
 
 header>.global>.menu {

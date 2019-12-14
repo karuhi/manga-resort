@@ -1,29 +1,58 @@
 <template>
   <div class="container">
-    <navmenu />
+    <header class="color_white background_maincolor">
+      <div class="global">
+        <router-link class="search" to="/">X</router-link>
+        <div class="title">MANGA RESORT</div>
+        <div>&nbsp&nbsp&nbsp&nbsp</div>
+      </div>
+    </header>
+    <div class="description">
+      <div class="seriesImage">
+        <div class="seriesImage-content" :style="{ backgroundImage: `url(${seriesData.seriesImage})`}">
+          <template>
+            <v-lazy-image :src="`${seriesData.seriesImage}`" :src-placeholder="`${loadingImageUrl}`" />
+          </template>
+        </div>
+      </div>
+      <div class="overlay-volumes">
+        全{{seriesData.volumes}}巻
+      </div>
+      <div class="content">
+        <div class="title">
+          {{seriesData.title}}
+        </div>
+        <div class="authorAndPubs">著 {{seriesData.author}}, 出版社 {{seriesData.publisher}}</div>
+        {{seriesData.description}}
+      </div>
+    </div>
     <div class="manga-container">
-      <router-link class="manga-card" v-for="(element, index) in seriesData[0].data.books" v-bind:to="`/bookViewer/${ element.id }`">
+      <router-link class="manga-card" v-for="(element, index) in seriesData.books" v-bind:to="`/bookViewer/${ element.id }`">
         <div class="meta">
-          <div class="photo" :style="{ backgroundImage: `url(${element.image})`}"></div>
+          <div class="photo">
+            <template>
+              <v-lazy-image :src="`${element.image}`" :src-placeholder="`${loadingImageUrl}`" />
+            </template>
+          </div>
         </div>
         <div class="description">
           <h1>{{ element.title}}</h1>
-          <h2>全{{seriesData[0].data.books.length}}巻中 {{index+1}}巻</h2>
+          <h2>全{{seriesData.books.length}}巻中 {{index+1}}巻</h2>
         </div>
       </router-link>
     </div>
   </div>
 </template>
 <script>
-import navmenu from '../../components/navmenu.vue'
 import axios from 'axios'
+import loadingImage from '../../assets/spinner.gif';
 
 export default {
-  components: {
-    navmenu
-  },
+  components: {},
   data: function() {
-    return {}
+    return {
+      loadingImageUrl: loadingImage
+    }
   },
   mounted: function() {},
   methods: {},
@@ -35,13 +64,68 @@ export default {
       myHttpClient.get('series/' + params.id)
     ])
     console.log(data);
-    return { seriesData: data };
+    return { seriesData: data[0].data };
   }
 }
 
 </script>
 <style scoped>
-/*PEN STYLES*/
+.page-enter-active {
+  animation-name: pushIn;
+  animation-duration: 0.3s;
+  animation-timing-function: ease;
+}
+
+.page-leave-active {
+  animation-name: pushOut;
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in-out;
+}
+
+.page-enter {}
+
+.page-leave-active {}
+@keyframes pushIn {
+  0% {
+    transform: translate(0px, 100vh);
+  }
+
+  100% {
+    transform: translate(0px, 0px);
+  }
+}
+@keyframes pushOut {
+  0% {
+    transform: translate(0px, 0px);
+  }
+
+  100% {
+    transform: translate(0px, 100vh);
+  }
+}
+
+.description>.content {
+  margin: 8px;
+}
+
+.description>.content>.authorAndPubs {
+  font-size: 0.8rem;
+  color: rgba(0, 0, 0, 0.6);
+
+}
+
+.overlay-volumes {
+  width: 64px;
+  height: 64px;
+  background-color: red;
+  position: absolute;
+  top: calc(30vh - 16px);
+  right: 8px;
+  border-radius: 50%;
+  line-height: 64px;
+  color: white;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -55,12 +139,14 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
 .manga-container {
-	margin-top: 8px;
-	margin-bottom: 8px;
-	margin-left: 16px;
-	margin-right: 16px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  margin-left: 16px;
+  margin-right: 16px;
 }
+
 .manga-card {
   display: flex;
   flex-direction: column;
@@ -69,7 +155,6 @@ a {
   margin-bottom: 1.6%;
   background: #fff;
   line-height: 1.4;
-  font-family: sans-serif;
   border-radius: 5px;
   overflow: hidden;
   z-index: 0;
@@ -93,7 +178,8 @@ a {
   height: 200px;
 }
 
-.manga-card .photo {
+.manga-card .photo,
+.manga-card .photo img {
   position: absolute;
   top: 0;
   right: 0;
@@ -104,53 +190,11 @@ a {
   transition: transform 0.2s;
 }
 
-.manga-card .details,
-.manga-card .details ul {
-  margin: auto;
-  padding: 0;
-  list-style: none;
-}
+.manga-card .photo img {
 
-.manga-card .details {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -100%;
-  margin: auto;
-  transition: left 0.2s;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  padding: 10px;
   width: 100%;
-  font-size: 0.9rem;
-}
-
-.manga-card .details a {
-  text-decoration: dotted underline;
-}
-
-.manga-card .details ul li {
-  display: inline-block;
-}
-
-.manga-card .details .author:before {
-  margin-right: 10px;
-}
-
-.manga-card .details .date:before {
-  margin-right: 10px;
-}
-
-.manga-card .details .tags ul:before {
-  margin-right: 10px;
-}
-
-.manga-card .details .tags li {
-  margin-right: 2px;
-}
-
-.manga-card .details .tags li:first-child {
-  margin-left: -4px;
+  height: 100%;
+  object-fit: contain;
 }
 
 .manga-card .description {
@@ -160,10 +204,6 @@ a {
   z-index: 1;
 }
 
-.manga-card .description h1,
-.manga-card .description h2 {
-  font-family: Poppins, sans-serif;
-}
 
 .manga-card .description h1 {
   line-height: 1;
@@ -179,27 +219,6 @@ a {
   margin-top: 5px;
 }
 
-.manga-card .description .read-more {
-  text-align: right;
-}
-
-.manga-card .description .read-more a {
-  color: #0F4C81;
-  display: inline-block;
-  position: relative;
-}
-
-.manga-card .description .read-more a:after {
-  content: ">";
-  opacity: 0;
-  vertical-align: middle;
-  transition: margin 0.3s, opacity 0.3s;
-}
-
-.manga-card .description .read-more a:hover:after {
-  margin-left: 5px;
-  opacity: 1;
-}
 
 .manga-card p {
   position: relative;
@@ -264,6 +283,79 @@ a {
   .manga-card.alt .details {
     padding-left: 25px;
   }
+}
+
+header {
+  z-index: 99998;
+  min-width: 100%;
+  height: 58px;
+  position: sticky;
+  top: 0;
+}
+
+header>.global {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 58px;
+}
+
+header>.global>.menu {
+  margin-right: 20px;
+  height: 30px;
+  width: 30px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+header>.global>.menu>div {
+  width: 28px;
+  height: 2px;
+  margin-top: 8px;
+  vertical-align: middle;
+  border-radius: 2px;
+}
+
+header>.global>.title {
+  font-size: 28px;
+  margin-right: 20px;
+}
+
+header>.global>.search {
+  line-height: 58px;
+  height: 58px;
+  width: 58px;
+}
+
+.seriesImage {
+  width: 100%;
+  height: 30vh;
+}
+
+.seriesImage-content {
+  height: 100%;
+  background-size: cover;
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.seriesImage-content:before {
+  content: '';
+  background: inherit;
+  filter: blur(5px);
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  z-index: -1;
+}
+
+.seriesImage-content>img {
+  width: 100%;
+  height: 30vh;
+  object-fit: contain;
 }
 
 </style>

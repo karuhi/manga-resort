@@ -6,28 +6,28 @@
         <img :src="element.seriesImage" />
       </div>
     </div>-->
-    <div class="manga-card" v-for="(element, index) in ArticleData[0].data.data">
-      <div class="meta">
-        <div class="photo" :style="{ backgroundImage: `url(${element.seriesImage})`}"></div>
-        <ul class="details">
-          <li class="author">{{element.author}}</li>
-          <li class="publisher">{{element.publisher}}</li>
-        </ul>
-      </div>
-      <div class="description">
-        <h1>{{ element.title}}</h1>
-        <h2>全{{element.volumes}}巻</h2>
-        <p> {{element.description}}</p>
-        <p class="read-more">
-          <router-link v-bind:to="`/series/${ element.seriesId }`">この漫画の一覧を見る</router-link>
-        </p>
-      </div>
+    <div class="manga-container">
+      <router-link class="manga-card" v-for="(element, index) in ArticleData[0].data.data" v-bind:to="`/series/${ element.seriesId }`">
+        <div class="meta">
+          <div class="photo">
+            <template>
+              <v-lazy-image :src="`${element.seriesImage}`" :src-placeholder="`${loadingImageUrl}`" />
+            </template>
+          </div>
+        </div>
+        <div class="description">
+          <h1>{{ element.title}}</h1>
+          <h2>全{{element.volumes}}巻</h2>
+          <p> {{element.description}}</p>
+        </div>
+      </router-link>
     </div>
   </div>
 </template>
 <script>
 import navmenu from '../components/navmenu.vue'
 import axios from 'axios'
+import loadingImage from '../assets/spinner.gif';
 
 export default {
   components: {
@@ -37,7 +37,8 @@ export default {
     return {
       nowSlide: 0,
       SlideInterval: 5000,
-      intervalId: undefined
+      intervalId: undefined,
+      loadingImageUrl: loadingImage
     }
   },
   mounted: function() {
@@ -126,8 +127,10 @@ export default {
   height: 40vh;
   object-fit: contain;
 }
-
-/*PEN STYLES*/
+a {
+  color: inherit;
+  text-decoration: none;
+}
 * {
   box-sizing: border-box;
 }
@@ -135,6 +138,13 @@ export default {
 body {
   background: #f1f1f1;
   margin: 2rem;
+}
+
+.manga-container {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  margin-left: 16px;
+  margin-right: 16px;
 }
 
 .manga-card {
@@ -145,7 +155,6 @@ body {
   margin-bottom: 1.6%;
   background: #fff;
   line-height: 1.4;
-  font-family: sans-serif;
   border-radius: 5px;
   overflow: hidden;
   z-index: 0;
@@ -180,53 +189,11 @@ body {
   transition: transform 0.2s;
 }
 
-.manga-card .details,
-.manga-card .details ul {
-  margin: auto;
-  padding: 0;
-  list-style: none;
-}
+.manga-card .photo img {
 
-.manga-card .details {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -100%;
-  margin: auto;
-  transition: left 0.2s;
-  background: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  padding: 10px;
   width: 100%;
-  font-size: 0.9rem;
-}
-
-.manga-card .details a {
-  text-decoration: dotted underline;
-}
-
-.manga-card .details ul li {
-  display: inline-block;
-}
-
-.manga-card .details .author:before {
-  margin-right: 10px;
-}
-
-.manga-card .details .date:before {
-  margin-right: 10px;
-}
-
-.manga-card .details .tags ul:before {
-  margin-right: 10px;
-}
-
-.manga-card .details .tags li {
-  margin-right: 2px;
-}
-
-.manga-card .details .tags li:first-child {
-  margin-left: -4px;
+  height: 100%;
+  object-fit: contain;
 }
 
 .manga-card .description {
@@ -234,11 +201,6 @@ body {
   background: #fff;
   position: relative;
   z-index: 1;
-}
-
-.manga-card .description h1,
-.manga-card .description h2 {
-  font-family: Poppins, sans-serif;
 }
 
 .manga-card .description h1 {
@@ -255,26 +217,11 @@ body {
   margin-top: 5px;
 }
 
-.manga-card .description .read-more {
-  text-align: right;
-}
-
-.manga-card .description .read-more a {
-  color: #0F4C81;
-  display: inline-block;
-  position: relative;
-}
-
-.manga-card .description .read-more a:after {
-  content: ">";
-  opacity: 0;
-  vertical-align: middle;
-  transition: margin 0.3s, opacity 0.3s;
-}
-
-.manga-card .description .read-more a:hover:after {
-  margin-left: 5px;
-  opacity: 1;
+.manga-card .description p {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .manga-card p {
