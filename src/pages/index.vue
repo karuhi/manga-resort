@@ -22,16 +22,19 @@
         </div>
       </router-link>
     </div>
+    <bottombar />
   </div>
 </template>
 <script>
 import navmenu from '../components/navmenu.vue'
+import bottombar from '../components/bottombar.vue'
 import axios from 'axios'
 import loadingImage from '../assets/spinner.gif';
 
 export default {
   components: {
-    navmenu
+    navmenu,
+    bottombar
   },
   data: function() {
     return {
@@ -145,6 +148,7 @@ body {
   margin-bottom: 8px;
   margin-left: 16px;
   margin-right: 16px;
+  padding-bottom: 58px;
 }
 
 .manga-card {

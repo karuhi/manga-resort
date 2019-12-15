@@ -2,21 +2,27 @@
   <header class="color_white background_maincolor">
     <div class="global">
       <div class="search">&nbsp&nbsp&nbsp&nbsp</div>
-      <div class="title">MANGA RESORT</div>
+      <div class="title">
+            <template>
+              <v-lazy-image :src="`${logoImageUrl}`" :src-placeholder="`${loadingImageUrl}`" />
+            </template>
+      </div>
       <div class="menu" @click="toggleMenu=!toggleMenu">
-        <div class="background_white" v-for="n in 3"></div>
+        <!--<div class="background_white" v-for="n in 3"></div>-->
       </div>
     </div>
   </header>
 </template>
 <script>
+import logoImage from '../assets/logo.png';
+import loadingImage from '../assets/spinner.gif';
+
 export default {
-  props: ['json'],
   data() {
     return {
-      tags: ['出版社で選ぶ', '新潟書店', '京田辺書店', 'Patreon'],
-      date: ['2019.5', '2019.4', '2019.3', '2019.2', '2019.1', '2018.12', '2018.11', '2018.10', '2018.9', ],
-      toggleMenu: false
+      toggleMenu: false,
+      loadingImageUrl: loadingImage,
+      logoImageUrl: logoImage
     }
   }
 }
@@ -56,6 +62,7 @@ header>.global>.menu>div {
 
 header>.global>.title {
   font-size: 28px;
+  margin-top: 10px;
 }
 
 header>.global>.search {
@@ -113,80 +120,6 @@ header>.category_list>div {
   width: 40px;
   border-radius: 0 5px 5px 0;
   border-style: none;
-}
-
-.toggleMenu>.category_list {
-  margin-left: 20px;
-  height: 50px;
-  overflow-x: auto;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
-}
-
-.toggleMenu>.category_list>div:nth-child(1) {
-  display: inline-block;
-  margin: 10px;
-  height: 30px;
-  width: 80px;
-}
-
-.toggleMenu>.category_list>div {
-  display: inline-block;
-  margin: 10px 10px 10px 0px;
-  height: 30px;
-  width: 80px;
-}
-
-header>.category_list::-webkit-scrollbar,
-.toggleMenu>.category_list::-webkit-scrollbar,
-.toggleMenu>.featured_list::-webkit-scrollbar {
-  height: 5px;
-}
-
-header>.category_list::-webkit-scrollbar-track,
-.toggleMenu>.category_list::-webkit-scrollbar-track,
-.toggleMenu>.featured_list::-webkit-scrollbar-track {
-  background: #1E1B18;
-}
-
-header>.category_list::-webkit-scrollbar-thumb,
-.toggleMenu>.category_list::-webkit-scrollbar-thumb,
-.toggleMenu>.featured_list::-webkit-scrollbar-thumb {
-  background: #3E92CC;
-  border-radius: 5px;
-}
-
-.toggleMenu>.featured_list {
-  margin-left: 20px;
-  height: 180px;
-  overflow-x: auto;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
-}
-
-.toggleMenu>.featured_list>.list {
-  margin: 10px 20px 10px 0;
-  display: inline-block;
-    position: relative;
-}
-.toggleMenu>.featured_list>.list>img {
-  border-radius: 5px;
-  height: 120px;
-  width: 160px;
-}
-.toggleMenu>.featured_list>.list>.title {
-  position: absolute;
-  word-wrap: break-word;
-  white-space: normal;
-  width: 140px;
-  height: 30px;
-  margin-left:10px;
-  font-size: 12px;
-}
-.text_left {
-  margin-left: 20px;
-  margin-top: 20px;
-  text-align: left;
 }
 
 </style>

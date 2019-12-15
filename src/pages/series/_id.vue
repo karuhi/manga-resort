@@ -3,13 +3,13 @@
     <header class="color_white background_maincolor">
       <div class="global">
         <router-link class="search" to="/">X</router-link>
-        <div class="title">MANGA RESORT</div>
+        <div class="title"></div>
         <div>&nbsp&nbsp&nbsp&nbsp</div>
       </div>
     </header>
     <div class="description">
-      <div class="seriesImage">
-        <div class="seriesImage-content" :style="{ backgroundImage: `url(${seriesData.seriesImage})`}">
+      <div class="seriesImage-container">
+        <div class="seriesImage-container-content" :style="{ backgroundImage: `url(${seriesData.seriesImage})`}">
           <template>
             <v-lazy-image :src="`${seriesData.seriesImage}`" :src-placeholder="`${loadingImageUrl}`" />
           </template>
@@ -23,7 +23,10 @@
           {{seriesData.title}}
         </div>
         <div class="authorAndPubs">著 {{seriesData.author}}, 出版社 {{seriesData.publisher}}</div>
-        {{seriesData.description}}
+        <router-link class="quickReadBtn" v-bind:to="`/bookViewer/${seriesData.books[0].id}`">▶ 第1巻を今スグ読む</router-link>
+        <div class="seriesDescription">
+          {{seriesData.description}}
+        </div>
       </div>
     </div>
     <div class="manga-container">
@@ -38,6 +41,10 @@
         <div class="description">
           <h1>{{ element.title}}</h1>
           <h2>全{{seriesData.books.length}}巻中 {{index+1}}巻</h2>
+          <nuxt-link class="libadd" v-bind:to="`/library/?downloadBookId=${element.id }`">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 21H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h5l2 3h9a2 2 0 0 1 2 2v2M19 15v6M16 18h6" /></svg>
+          </nuxt-link>
         </div>
       </router-link>
     </div>
@@ -82,9 +89,6 @@ export default {
   animation-timing-function: ease-in-out;
 }
 
-.page-enter {}
-
-.page-leave-active {}
 @keyframes pushIn {
   0% {
     transform: translate(0px, 100vh);
@@ -94,6 +98,7 @@ export default {
     transform: translate(0px, 0px);
   }
 }
+
 @keyframes pushOut {
   0% {
     transform: translate(0px, 0px);
@@ -106,6 +111,7 @@ export default {
 
 .description>.content {
   margin: 8px;
+  text-align: left;
 }
 
 .description>.content>.authorAndPubs {
@@ -114,10 +120,22 @@ export default {
 
 }
 
+.description>.content>.quickReadBtn {
+  display: block;
+  margin: 8px 0 8px 0;
+  padding: 8px;
+  background-color: #0F4C81;
+  color: white;
+}
+
+.description>.content>.seriesDescription {
+  font-size: 0.75rem;
+}
+
 .overlay-volumes {
   width: 64px;
   height: 64px;
-  background-color: red;
+  background-color: #E05114;
   position: absolute;
   top: calc(30vh - 16px);
   right: 8px;
@@ -178,6 +196,8 @@ a {
   height: 200px;
 }
 
+
+
 .manga-card .photo,
 .manga-card .photo img {
   position: absolute;
@@ -204,6 +224,17 @@ a {
   z-index: 1;
 }
 
+.libadd {
+  z-index: 999999;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  padding: 2px;
+  border-radius: 5px;
+  background-color: #0F4C81;
+}
 
 .manga-card .description h1 {
   line-height: 1;
@@ -327,12 +358,12 @@ header>.global>.search {
   width: 58px;
 }
 
-.seriesImage {
+.seriesImage-container {
   width: 100%;
   height: 30vh;
 }
 
-.seriesImage-content {
+.seriesImage-container-content {
   height: 100%;
   background-size: cover;
   position: relative;
@@ -340,7 +371,7 @@ header>.global>.search {
   overflow: hidden;
 }
 
-.seriesImage-content:before {
+.seriesImage-container-content:before {
   content: '';
   background: inherit;
   filter: blur(5px);
@@ -352,7 +383,7 @@ header>.global>.search {
   z-index: -1;
 }
 
-.seriesImage-content>img {
+.seriesImage-container-content>img {
   width: 100%;
   height: 30vh;
   object-fit: contain;

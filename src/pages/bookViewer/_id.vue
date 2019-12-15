@@ -1,7 +1,8 @@
 <template>
   <div class="booksViewer" @click="showNavigation=!showNavigation">
     <div ref="nav" class="page_navigation" :style="{ display: showNavigation == true ? 'block' : 'none'}">
-      <span class="page_navigation-close" @click="backToSeries">X</span>{{ booksData.title }}
+      <div class="page_navigation-close" @click="backToSeries">X</div>
+      <div class="page_navigation-title">{{ booksData.title }}</div>
     </div>
     <carousel :per-page="1" :navigation-enabled="false" :paginationEnabled="false" :navigateTo="[preIndex,false]" @pageChange="onPageChange">
       <slide>
@@ -17,7 +18,7 @@
       <template v-for="(element, index) in booksData.imageData">
         <slide :key="index" class="slide_page">
           <template>
-            <v-lazy-image :src="`${element.imageUrl}`"/>
+            <v-lazy-image :src="`${element.imageUrl}`" />
           </template>
         </slide>
       </template>
@@ -38,6 +39,12 @@
     <div class="nowPageBanner">
       {{ -preIndex + (booksData.pageNum + 2) }} / {{ booksData.pageNum + 2}}
     </div>
+    <div class="addBookmark" @click="addBookmark">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+        <line x1="7" y1="7" x2="7" y2="7"></line>
+      </svg>
+    </div>
   </div>
 </template>
 <script>
@@ -50,14 +57,20 @@ export default {
       preIndex: 0
     }
   },
-  async asyncData({ params }) {
+  async asyncData({ params, query }) {
     const myHttpClient = axios.create({
       baseURL: "https://wfc2-image-api-259809.appspot.com/api/"
     })
     var data = await Promise.all([
       myHttpClient.get('books/' + params.id)
     ])
-    return { booksData: data[0].data,preIndex: (data[0].data.pageNum + 1)};
+    var firstpagenum;
+    if (!Object.keys(query).length) {
+      firstpagenum = (data[0].data.pageNum + 1);
+    } else {
+      firstpagenum = -query.page + (data[0].data.pageNum + 2);
+    }
+    return { booksData: data[0].data, preIndex: firstpagenum, booksId: params.id };
   },
   mounted() {
     this.reverseData()
@@ -78,6 +91,27 @@ export default {
     backToSeries() {
       console.log(this.booksData.seriesId);
       this.$router.push({ path: `/series/${this.booksData.seriesId}` });
+    },
+    addBookmark() {
+      var item = localStorage.getItem("bookmark");
+      var nowPage = -this.preIndex + (this.booksData.pageNum + 2);
+      if (item != null) {
+        var newItem = JSON.parse(item);
+
+        var found = newItem.find(ele => ele.books == this.booksId);
+        if (found === undefined) {
+          var currentItem = { "books": this.booksId, "page": nowPage };
+          newItem.push(currentItem);
+        } else {
+          found.page = nowPage;
+        }
+        localStorage.setItem("bookmark", JSON.stringify(newItem));
+      } else {
+        var newItem = [{ "books": this.booksId, "page": nowPage }];
+        localStorage.setItem("bookmark", JSON.stringify(newItem));
+      }
+
+      alert(nowPage + "ページにしおりを追加しました🔖");
     }
   }
 }
@@ -88,9 +122,11 @@ export default {
   opacity: 0;
   transition: opacity .4s;
 }
+
 .v-lazy-image-loaded {
   opacity: 1;
 }
+
 .page_navigation {
   position: absolute;
   top: 0;
@@ -107,7 +143,19 @@ export default {
 }
 
 .page_navigation-close {
-  padding: 16px;
+  display: inline-block;
+  width: 58px;
+  height: 58px;
+  vertical-align: top;
+}
+
+.page_navigation-title {
+  display: inline-block;
+  height: 58px;
+  width: calc(100vw - 68px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .slide_wrapper {
@@ -157,8 +205,20 @@ export default {
   margin: auto auto;
   background-color: rgba(0, 0, 0, 0.4);
   padding: 5px;
-  width: 50px;
+  width: 58px;
   border-radius: 5px;
+}
+
+.addBookmark {
+  position: absolute;
+  bottom: 14px;
+  right: 16px;
+  width: 48px;
+  height: 48px;
+  padding-top: 10px;
+  padding-left: 2px;
+  border-radius: 50%;
+  background-color: #0F4C81;
 }
 
 @keyframes fade {
